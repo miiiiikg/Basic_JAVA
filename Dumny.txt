@@ -133,4 +133,28 @@ SELECT * FROM tbl_board;
 
 COMMIT;
 
+DROP TABLE tbl_product;
+CREATE TABLE tbl_product(
+    pno NUMBER PRIMARY KEY,
+    pname VARCHAR(100) NOT NULL UNIQUE,
+    company VARCHAR(100) NOT NULL,
+    price NUMBER NOT NULL,
+    cnt NUMBER DEFAULT 0,
+    regdate DATE DEFAULT SYSDATE
+);
+
+DROP SEQUENCE seq_product;
+
+CREATE SEQUENCE seq_product 
+    START WITH 1001
+    INCREMENT BY 1
+    NOCYCLE;
+    
+INSERT INTO tbl_product(pno, pname, company, price, cnt)
+VALUES(seq_product.NEXTVAL, '코카콜라', '코카콜라', 900, 5);
+INSERT INTO tbl_product(pno, pname, company, price, cnt)
+VALUES(seq_product.NEXTVAL, '스프라이트', '코카콜라', 800, 10);
+
+COMMIT;
+SELECT * FROM tbl_product;
 
