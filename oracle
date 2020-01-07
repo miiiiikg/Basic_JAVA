@@ -1,0 +1,1066 @@
+-- DDL(데이터 정의어): CREATE, ALTER, DROP
+-- DML(데이터 조작어): INSERT, UPDATE, DELETE, SELECT
+-- DCL(데이터 제어어): GRANT, REVOKE
+-- TCL(트랜잭션 제어어): COMMIT, ROLLBACK
+
+-- 1. 테이블 생성(CREATE)
+CREATE TABLE  tbl_student(
+    stuno NUMBER PRIMARY KEY, -- 제약조건(1.PK KEY)
+    name VARCHAR2(20)NOT NULL, -- 제약조건(2.NOT NULL)
+    age NUMBER(2),
+    major VARCHAR2(30),
+    sal NUMBER,
+    pno NUMBER UNIQUE,
+    score NUMBER(3),
+    regdate DATE DEFAULT SYSDATE
+);
+
+-- 2. 제약조건(Constraint)
+-- 1) NOT NULL
+-- 컬럼에 공백값을 허용하지 않음(값이 모두 있어야 함)
+-- 2) UNIQUE
+-- 중복된 데이터가 없어져야함
+-- 3) CHECT
+-- 값의 범위를 지정(0 ~ 100, (1, 2, 3))
+-- 테이블 구조(desc)
+-- 4) DEFAULI
+-- 값이 들어지 않으면 설정된 default값을 넣음!
+-- 5) PRIMARY  KEY(기본키)
+-- 테이블에 데이터를 유일하게 식별할 수 있는 컬럼을 선정
+-- NOT NULL + UNIQUE
+-- 6) FOREIGN KEY(외래키)
+-- 관계를 맺어줄 때 사용
+-- 관계를 맺는 테이블의 기본키만 외래키로 선정 가능!
+
+-- 3.테이블 삭제(DROP)
+DROP TABLE tbl_student;
+
+-- 4.테이블 수정(ALTER)
+ALTER TABLE tbl_student
+DROP COLUMN score; --score 컬럼 삭제
+ALTER TABLE tbl_student
+ADD (score NUMBER(3)); --score 컬럼 추가
+ALTER TABLE tbl_student
+MODIFY (score NUMBER(5)); --score 컬럼 수정
+    
+--테이블에 제약조건 추가
+ALTER TABLE tbl_student
+ADD CONSTRAINT stu_ck_score --제약조건 이름
+CHECK(score >= 0 AND score <= 100); --CHECK 제약조건
+    
+-- 테이블 구조(desc)
+DESC tbl_Student
+
+-- tbl_student 테이블로부터 모든 값(*)을 select해오세요
+SELECT * FROM tbl_student;
+
+
+-- DML : 데이터조작어(INSERT, UPDATE, DELETE, SELECT)
+-- 1) INSERT(값을 추가)
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(1, '혜원', 25, '영어번역', 4000, 1, 90);
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(2, '미경', 24, 'IT', 5000, 2, 95);
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(3, '진주', 25, 'IT', 7000, 3, 96);
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(4, '동선', 27, '영상편집', 5000, 4, 91);
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(5, '승주', 28, 'IT', 8000, 5, 92);
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(6, '운이', 27, '요식업', 4200, 6, 94);
+INSERT INTO tbl_student(stuno, name, age, major, sal, pno, score)
+VALUES(7, '종희', 27, '패션디자인', 3500, 7, 87);
+
+COMMIT;
+
+SELECT * FROM tbl_student;
+-- 2) UPDATE(값을 수정)
+UPDATE tbl_student
+SET major = 'IT' 
+WHERE stuno = 2;
+UPDATE tbl_student        
+SET major = 'IT' 
+WHERE stuno = 3;
+
+-- 3) DELETE(값을 삭제)
+DELETE FROM tbl_student
+WHERE stuno = 2; 
+
+-- 4) SELECT(값을 조회)
+-- SELECT 컬럼들
+-- FROM 테이블명;
+SELECT *  -- * : 모든 컬럼
+FROM tbl_student; 
+
+SELECT name, age, sal
+FROM tbl_student;
+
+-- alias : 별칭
+SELECT name AS 이름, age, sal AS 연봉
+FROM tbl_student;
+
+-- 검색
+-- 이름이 '동선'인 학생을 검색
+SELECT * FROM tbl_student
+WHERE name = '동선';
+
+-- 전공이 'IT'인 학생을 검색
+SELECT * FROM tbl_student
+WHERE major = 'IT';
+
+-- SCORE가 90점 이상인 학생만 검색
+SELECT * FROM tbl_student
+WHERE score >= 90;
+
+-- SCORE가 90 이상이면서 95점 이하인 학생만 검색
+SELECT * FROM tbl_student
+WHERE score >= 90 AND score <= 95;
+SELECT * FROM tbl_student
+WHERE score IN(90,91,92,93,94,95);
+SELECT * FROM  tbl_student
+WHERE major='영어번역' OR major='영상편집';
+SELECT * FROM tbl_student
+WHERE major IN('영어번역', '영상편집');
+
+-- 정렬
+SELECT * FROM tbl_student
+ORDER BY score DESC; -- 내림차순
+SELECT * FROM tbl_student
+ORDER BY score ASC; -- 오름차순(dafault) 
+SELECT * FROM tbl_student
+ORDER BY score ASC, sal DESC; -- (1차)score의 중복된 값(1차)에서 sal을 다시 정렬(2차) 
+
+CREATE TABLE tbl_study(
+    sno VARCHAR2(20) PRIMARY KEY,   -- 회원번호
+    sname VARCHAR2(50) NOT NULL,    -- 회원이름
+    sage NUMBER(2)                  -- 회원나이
+);
+
+-- INSERT로 값을 등록하는 첫번째 방법(가장 많이 사용)
+INSERT INTO tbl_study(sno, sname, sage)
+VALUES('1', '동선', 27);
+
+-- INSERT로 값을 등록하는 두번째 방법
+INSERT INTO tbl_study
+VALUES('2', '승주', 28);
+
+
+
+
+
+
+
+
+
+
+
+
+
+--< 2019/12/12 >--------------------------------------------------------------
+
+DROP TABLE EMP;
+DROP TABLE DEPT;
+DROP TABLE BONUS;
+DROP TABLE SALGRADE;
+DROP TABLE DUMMY;
+ 
+CREATE TABLE EMP
+       (EMPNO NUMBER(4) PRIMARY KEY,
+        ENAME VARCHAR2(10),
+        JOB VARCHAR2(9),
+        MGR NUMBER(4),
+        HIREDATE DATE,
+        SAL NUMBER(7, 2),
+        COMM NUMBER(7, 2),
+        DEPTNO NUMBER(2));
+ 
+INSERT INTO EMP VALUES
+        (7369, 'SMITH',  'CLERK',     7902,
+        sysdate,  800, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7499, 'ALLEN',  'SALESMAN',  7698,
+        sysdate, 1600,  300, 30);
+         
+INSERT INTO EMP VALUES
+        (7521, 'WARD',   'SALESMAN',  7698,
+        sysdate, 1250,  500, 30);
+         
+INSERT INTO EMP VALUES
+        (7566, 'JONES',  'MANAGER',   7839,
+        sysdate,  2975, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7654, 'MARTIN', 'SALESMAN',  7698,
+        sysdate, 1250, 1400, 30);
+         
+INSERT INTO EMP VALUES
+        (7698, 'BLAKE',  'MANAGER',   7839,
+        sysdate,  2850, NULL, 30);
+         
+INSERT INTO EMP VALUES
+        (7782, 'CLARK',  'MANAGER',   7839,
+        sysdate,  2450, NULL, 10);
+INSERT INTO EMP VALUES
+        (7788, 'SCOTT',  'ANALYST',   7566,
+        sysdate, 3000, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7839, 'KING',   'PRESIDENT', NULL,
+        sysdate, 5000, NULL, 10);
+         
+INSERT INTO EMP VALUES
+        (7844, 'TURNER', 'SALESMAN',  7698,
+        sysdate,  1500,    0, 30);
+         
+INSERT INTO EMP VALUES
+        (7876, 'ADAMS',  'CLERK',     7788,
+        sysdate, 1100, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7900, 'JAMES',  'CLERK',     7698,
+        sysdate,   950, NULL, 30);
+         
+INSERT INTO EMP VALUES
+        (7902, 'FORD',   'ANALYST',   7566,
+        sysdate,  3000, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7934, 'MILLER', 'CLERK',     7782,
+        sysdate, 1300, NULL, 10);
+ 
+CREATE TABLE DEPT
+       (DEPTNO NUMBER(2) PRIMARY KEY,
+        DNAME VARCHAR2(14),
+        LOC VARCHAR2(13) );
+ 
+INSERT INTO DEPT VALUES (10, 'ACCOUNTING', 'NEW YORK');
+INSERT INTO DEPT VALUES (20, 'RESEARCH',   'DALLAS');
+INSERT INTO DEPT VALUES (30, 'SALES',      'CHICAGO');
+INSERT INTO DEPT VALUES (40, 'OPERATIONS', 'BOSTON');
+ 
+CREATE TABLE BONUS
+        (ENAME VARCHAR2(10),
+         JOB   VARCHAR2(9),
+         SAL   NUMBER,
+         COMM  NUMBER);
+ 
+CREATE TABLE SALGRADE
+        (GRADE NUMBER,
+         LOSAL NUMBER,
+         HISAL NUMBER);
+ 
+INSERT INTO SALGRADE VALUES (1,  700, 1200);
+INSERT INTO SALGRADE VALUES (2, 1201, 1400);
+INSERT INTO SALGRADE VALUES (3, 1401, 2000);
+INSERT INTO SALGRADE VALUES (4, 2001, 3000);
+INSERT INTO SALGRADE VALUES (5, 3001, 9999);
+ 
+CREATE TABLE DUMMY
+        (DUMMY NUMBER);
+ 
+INSERT INTO DUMMY VALUES (0);
+ 
+COMMIT;
+
+SELECT * FROM emp;
+
+-------------2020-01-06---------------------------------------------------------
+
+-- JOIN
+-- 1. 둘 이상의 테이블을 연결하여 하나의 가상테이블을 만드는 것 
+-- 2. 보통 둘 이상의 행들의 공통된 값 PK(주식별자) 및 FK값을 사용하여 조인한다
+-- 3. 두 개의 테이블을 SELECT 문장 안에서 조인하려면 적어도 하나의 
+--   컬럼이 그 두 테이블 사이에서 공유되어야 한다. 
+
+SELECT * FROM emp;  -- depton : FK키
+SELECT * FROM dept; -- depton : PK키
+
+-- 신입사원 반드시 하나 이상의 부서에 소속되어야한다. 
+
+-- JOIN 종류
+-- 1. Equi Join(동등조인)
+-- ex) dept 테이블과 emp테이블을 조인
+-- as 컬럼에 쓰이는거 table
+SELECT e.empno, e.ename as 사원이름, dept.dname
+FROM dept d, emp e
+WHERE d.deptno = e.deptno; -- WHERE dept.deptno = emp.deptno
+
+-- 2. Inner Join == Equi Join
+-- ex) dept테이블과 emp테이블을 Inner 조인
+-- , 대신에 INNER JOIN을 사용(INNER 생략가능)
+-- WHERE절이 ON절 => JOIN의 조건
+SELECT e.empno, e.ename, d.danme
+FROM dept d
+INNER JOIN emp e
+ON d.deptno = e.deptno;
+
+-- 3. Natural join == Equi join
+-- ex) dept테이블과 emp테이블을 Natural 조인
+-- 동일한 컬럼을 내부적으로 모두 조인, ON절(동등조건)이 생략 가능
+-- Natural Join에서 USING절을 사용하고싶으면 Inner Join으로 변경하시고 사용해야함
+-- Natural과 USING은 같이 사용이 불가능합니다. 
+-- => Natural Join
+SELECT e.empno, e.ename, d.dname
+FROM dept d
+NATURAL JOIN emp 
+USING(deptno);
+-- USING(deptno); -- 동일한 이름을 가지는 컬럼은 모두 조인됨으로
+                  -- USING을 사용하면 컬럼을 선택해서 조인 가능
+
+-- 4. Non-Equi Join
+-- 테이블의 어떤 컬럼도 Join할 테이블의 컬럼과 일치하지 않을 때 사용
+-- 조인조건은 동등(=) 이외의 연산자를 사용합니다. 
+-- BETWEEN AND, IS NULL, IS NOT NULL, IN, NOT IN 
+-- 거의 사용하지 않는다. 
+SELECT * FROM salgrade; -- 등급별 연봉최저액 ~ 최고액
+-- ex) emp테이블과 salgrade테이블의 Non_Equi Join
+SELECT e.ename, e.sal, s.grade
+FROM emp e, salgrade s
+WHERE e.sal
+BETWEEN s.losal
+AND s.hisal;
+
+-- 5. Self Join
+-- Equi Join과 같으나 하나의 테이블에서 조인이 일어난다는 것이 다르다.
+-- 같은 테이블에 대해 두개의 alias를 사용하여 FROM절에 두개의 테이블 사용하는 것 처럼 조인한다. 
+-- ex) 사원의 매니저이름을 조회하는 Self Join
+SELECT e.ename, e.ename as Manager
+FROM emp e, emp a
+WHERE e.empno = a.mgr;
+
+-- 6. Cross Join = Cartesian Product
+-- 검색하고자 했던 데이터뿐 아니라 조인에 사용된 테이블들의 모든 데이터가 반환 되는 현상
+-- Cartesian Product는 조인 조건을 정의하지 않은 경우 발생한다. 
+-- CROSS JOIN를 사용하면 Cartesian Product 값을 얻을 수 있음
+-- ex) CROSS JOIN절을 이용하여 Cartesian Product 값을 얻는 예제
+SELECT e.empno, e.ename, d.dname
+FROM dept d CROSS JOIN emp e;
+-- emp:14개, dept:4개 => 14x4 = 56건 출력
+
+-- 7. Outer Join
+-- Equi Join은 조인을 생성하려는 두 개의 테이블의 한쪽 컬럼에서 값이 없다면 데이터를 반환하지 못함.
+-- 동일 조건에서 조인 조건을 만족하는 값이 없는 행들을 조화하기 위해 Outer Join 을 사용
+-- Outer Join  연산자는 (+)이다. 
+-- 조인시 값이 없는 조인측에 (+)를 위치 시킨다. 
+-- Outer Join 연산자는 표현식의 한 편에만 올 수 있다. 
+-- ex) Equi Join과 Outer Join의 비교
+--    ex1) Equi Join으로 부서번호를 조회
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM emp e, dept d
+WHERE e.deptno = d.deptno;
+
+--    ex2) Outer Join으로 부서번호 조회
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM emp e, dept d
+WHERE e.deptno(+) = d.deptno; 
+
+--    ex3) LEFT OUTER JOIN
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM dept d
+LEFT OUTER JOIN emp e
+ON e.deptno = d.deptno;
+
+--    ex4) RIGHT OUTER JOIN
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM emp e
+RIGHT OUTER JOIN dept d
+ON e.deptno = d.deptno;
+
+--    ex5) FULL OUTER JOIN
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM emp e
+FULL OUTER JOIN dept d
+ON e.deptno = d.deptno;
+
+-- Commit과 Rollback
+-- DCL(TCL) : 트랜잭션
+-- SAVEPOINT a
+-- ROLLBACK TO a;
+
+-------------2020-01-07---------------------------------------------------------
+-- Oracle 내장함수
+-- : DUAL 테이블  
+--  1. Oracle에서 자체적으로 제공하는 테이블
+--  2. 간단하게 함수를 이용해서 계산 결과값을 확인할 때 사용
+--  3. SYS사용자(신급권한)가 소유하는 Oracle의 표준 테이블
+--  4. SYS사용자가 소유하지만 어느 사용자든 접근 가능
+--  5. 오직 한행, 한컬럼만 담고 있는 dummy 테이블
+-- : Dual 테이블 사용용도
+--  1. 사용자가 함수(계산)를 실행할 때 임시로 사용하는데 적합
+--  2. 함수에 대한 쓰임을 알고 싶을 때 특정 테이블 생성없이 dual을 사용하면 return받을 수 있음
+
+-- ex) 현재시간 출력
+SELECT SYSDATE FROM DUAL;
+
+-- ex) 시퀀스 현재번호 출력
+SELECT seq_sale.CURRVAL FROM DUAL;
+
+-- ex) 시퀸스 다음번호 출력
+SELECT seq_sale.NEXTVAL FROM DUAL;
+
+--  ** 숫자형 함수
+-- 1. ABS 절대값을 반환하는 함수
+SELECT ABS(-1.234) absolute FROM DUAL;
+
+-- 2. CEIL 올림값을 반환하는 함수
+SELECT CEIL(10.1234) FROM DUAL;
+
+-- 3. FLOOR  버림값을 반환하는 함수
+SELECT FLOOR(10.1234) FROM DUAL;
+
+-- 4. MOD 함수를 m을 n으로 나눈 나머지 반환, n이 0일 경우 m을 반환
+SELECT MOD(9,4) FROM DUAL;
+
+-- 5. ROUND n값의 반올림을 하는 함수로 m은 소숫점 아래 자릿수를 나타냄
+SELECT ROUND(192.153, 1) FROM DUAL;
+SELECT ROUND(192.153, -1) FROM DUAL;
+ 
+-- 6. TRUNC n값을 절삭하는 함수는 m은 소숫점 아래 자릿수를 나타냄
+SELECT TRUNC(7.5997, 2) FROM DUAL;
+SELECT TRUNC(789.5597, -2) FROM DUAL;
+
+-- ** 문자열함수
+-- 1. CONCAT 두 문자를 결합, '||' <= LIKE절
+-- ex) '%' || keyword || '%' => '%keyword%'
+SELECT CONCAT('www.', 'oracle.') || 'com' FROM DUAL;
+
+-- 2. INITCAP(char), LOWER(char), UPPER(char)
+-- INITCAP : 주어진 문자열의 첫 번째 문자를 대문자로 변환
+-- LOWER : 주어진 문자열을 소문자로 변환
+-- UPPER : 주어진 문자열을 대문자로 변환
+SELECT INITCAP('oracle') name FROM DUAL;
+SELECT LOWER('oracle') name FROM DUAL;
+SELECT UPPER('oracle') name FROM DUAL;
+
+-- 3. LENGTH(char), LENGTHB(char)
+-- 문자열의 길이를 반환
+SELECT LENGTH('오라클자바') len FROM DUAL; -- 결과: 5(순수 글자수)
+SELECT LENGTHB('오라클자바') len FROM DUAL; -- --결과 : 15(글자 바이트수, 한글 1글자당 3byte)
+
+-- 4. REPLACE(char1, str1, str2)
+-- 문자열의 특정 문자를 다른 문자로 변환
+SELECT REPLACE('오라클자바', '오라클', '파이썬') FROM DUAL;
+
+-- 5. INSTR(char1, str1, m, n)
+-- 문자열이 포함되어 있는지 조사하여 문자열의 위치를 반환, 문자열이 발견되지 않으면 0이 반환
+-- char1:지정문자, str1:검색문자, m: 시작위치, n:검색순위
+SELECT INSTR('CORPORATE FLOOR', 'OK') FROM DUAL;
+SELECT INSTR('CORPORATE FLOOR', 'OR') FROM DUAL;
+SELECT INSTR('CORPORATE FLOOR', 'OR', 3, 2)idx FROM DUAL;
+
+-- 6. TRIM
+-- 특정한 문자를 제거, 제거할 문자를 입력하지 않으면 기본적으로 공백이 제거
+SELECT TRIM('     오라클자바') FROM DUAL;
+
+
+-- 집계함수
+--  1. GROUP BY절을 이용하여 그룹 당 하나의 결과로 그룹화 할 수 있다. 
+--  2. HAVING절을 사용하여 집계함수를 이용한 조건 비교를 할 수 있다. 
+--  3. MIN, MAX 함수는 모든 자료형에 사용할 수 있다. 
+
+-- 1. COUNT
+-- 검색된 행의 수를 반환
+SELECT COUNT(deptno) FROM dept;
+
+-- 2. MAX: 최대값 반환
+SELECT MAX(sal) salary FROM emp;
+
+-- 3. MIN: 최소값 반환
+SELECT MIN(sal) salary FROM emp;
+
+-- 4. SUM: 합을 반환
+SELECT SUM(SAL) salary
+FROM emp
+WHERE deptno = 30;
+
+-- 5.STDDEV : 표준편차
+SELECT ROUND(STDDEV(sal), 3) salary
+FROM emp
+WHERE deptno = 30;
+
+-- 집계함수 예
+SELECT deptno 부서번호, COUNT(*) 사원수,
+       MAX(sal) 최대급여, MIN(sal) 최소급여,
+       SUM(sal) 급여합계, ROUND(AVG(sal)) 평균급여
+ FROM emp
+GROUP BY deptno
+ORDER BY SUM(sal) DESC;
+
+-- SELECT의 GROUP BY절
+--  1. 데이터를 원하는 그룹으로 나눌 수 있음
+--  2. 나누고자 하는 그룹의 컬럼명을 SELECT절과 GROUP BY절 뒤에 추가하면 됨
+--  3. 집계함수와 함께 사용되는 상수는 GROUP BY절에 추가하지 않아도 된다. 
+-- ※ 집계함수는 
+
+-- ex) 부서별 사원수 조회
+SELECT '2020년' year, deptno 부서번호, COUNT(*) 사원수
+FROM emp 
+GROUP BY deptno
+ORDER BY COUNT(*) DESC;
+
+-- ex) 부서별로 그룹하여 부서번호, 인원수, 급여의 평균, 급여의 합을 조회
+SELECT deptno 부서번호, COUNT(*) 인원수, ROUND(AVG(sal)) 급여평균, SUM(sal) 급여합계
+FROM emp
+GROUP BY deptno
+
+-- SELECT에 HAVING절
+--  1. WHERE절에는 집계함수를 사용할수 없음
+--  2. HAVING절은 집계함수를 가지고 조건비교를 할 때 사용
+--  3. HAVING절은 GROUP BY절과 함께 사용
+
+-- ex) 사원수가 다섯 명이 넘는 부서와 사원수를 조회
+SELECT d.dname, COUNT(e.empno) 사원수
+FROM emp e, dept d
+WHERE e.deptno = d.deptno
+GROUP BY dname
+HAVING COUNT(e.empno) >= 5
+ORDER BY dname;
+
+-- 1. FROM : emp 전체, dept 전체
+-- 2. WHERE: emp테이블의 dept테이블의 deptno에 값이 같으면 JOIN(JOIN된 14건)
+-- 3. GROUP BY : JOIN된 14건의 결과에서 dname 컬럼의 값으로 그룹핑(3종류:ACCOUNTING, RESEARCH, SALES)
+-- 4. HAVING: 그루핑 된 3건의 결과 중 사원수가 5보다 크거나 같은 2그룹(RESEARCH, SALES)
+-- 5. SELECT: 출력하고 싶은 컬럼 지정(사원이름, 사원수)
+-- 6. ORDER BY: 정렬(danme을 오름차순 정렬: 알파벳 a, b, c .... 순)
+
+
+-- VIEW 테이블 
+--  1. 하나의 가상 테이블
+--  2. 실제 데이터가 저장되는 것은 아니지만 뷰를 통해 데이터를 관리할 수 있음
+--  3. 복잡한 Query를 통해 얻을 수 있는 결과를 간단한 Query로 얻을 수 있음
+--  4. 한 개의 뷰로 여러 테이블에 대한 데이터를 검색 할 수 있음
+-- View 설정값
+-- FORCE : 기본 테이블 유무에 관계없이 VIEW를 생성
+-- WITH CHECK OPTION : VIEW에 의해 엑세스될 수 있는 행만이 입력되거나 변경될 수 있음
+-- WITH READ ONLY: SELECT만 가능한 VIEW 생성
+
+-- View 테이블 구조
+-- CREATE [OR REPLACE] [FORCE|NOFORCE] VIEW view_name
+-- AS subquery
+-- [WITH CHECK OPTION] [CONSTRAINT 제약조건]
+-- [WITH READ ONLY]
+
+-- ex) View 생성
+CREATE OR REPLACE VIEW view_query
+AS 
+    SELECT e.empno, e.ename, d.loc
+    FROM emp e, dept d
+    WHERE e.deptno = d.deptno;
+    
+SELECT * FROM view_query;
+
+-- 인덱스
+--  : 테이블내에 원하는 레코드를 빠르게 찾아갈 수 있도록 만들어진 데이터 구조
+--  : 오라클에서는 B-tree를 기반으로 인덱스를 생성함
+
+-- 자동인덱스 : PK, Unique 속성을 사용할 때 자동으로 생성되는 인덱스
+-- 수동인덱스 : CREATE INDEX명으로 직접 만든 인덱스
+
+
+-- ※ 인덱스를 건다고 해서 무조건 성능이 좋아지는건 아님, 역으로 나빠질수도 있음
+
+-- 인덱스를 사용하면 좋은 경우
+--  1. WHERE절이나 JOIN조건 안에서 자주 사용되는 컬럼
+--  2. Null값이 많이 포함되어 있는 컬럼
+--  3. WHERE절이나 JOIN조건에서 자주 사용되는 두 개이상의 컬럼들 
+
+-- 인덱스를 사용하면 안좋은 경우
+--  1. 테이블이 작은경우(데이터가 작은 경우)
+--  2. 테이블이 자주 갱신되는 경우(값이 INSERT, UPDATE, DELETE 되는 경우)
+
+
+-- ex) UNIQUE 인덱스 생성
+CREATE UNIQUE INDEX emp_ename_indx
+ON emp(ename);
+
+-- ex) 인덱스 삭제
+DROP INDEX emp_ename_indx;
+
+
+-- Subquery (서브 쿼리)
+--  1. Subquery는 다른 하나의 SQL문장의 절에 NEXTEDED된 SELECT 문장
+--  2. SELECT, UPDATE, DELETE, INSERT와 같은 DML문과 DREATE 또는 VIEW외 WHERE절이나 HAVING절에 사용
+--  3. 보통 Subquery는 Main Query 이전에 한번 실행된다.
+--  4. Subquery는 괄호로 묶어야 함 
+--  5. 단일행 연산자(=, <, >, <=, >=, <>, !=)와
+--     다중행 연산자(IN, NOT IN, ANY, ALL, EXISTS)들이 서브쿼리에서 사용
+--  6. Subquery는 연산자의 오른쪽에 위치해야 한다.
+
+-- ex) JOB이 'CLERK'인 사원의 이름과 직업을 조회
+SELECT ename, job
+FROM emp
+WHERE job = 'CLERK';
+
+
+-- 동선씨 직업 몰라!
+-- 동선씨 직업을 갖는 사람들을 조회 : Main Query
+--   ㄴ 동선씨 직업 조회 : Sub Query
+
+SELECT ename, job, sal
+FROM emp
+WHERE job = (SELECT job 
+             FROM emp
+             WHERE ename = '동선')
+
+-- ex) 부서별로 가장 급여를 많이 받는 사원의 정보를 출력
+
+SELECT empno, ename, sal, deptno
+FROM emp
+WHERE sal IN (SELECT MAX(sal)
+             FROM emp
+             GROUP BY deptno);
+-- =============> Subquery 실행 후
+SELECT empno, ename, sal, deptno
+FROM emp
+WHERE sal IN (2850, 3000, 5000);
+
+부서별로 가장 급여를 많이받는 사람의 연봉
+SELECT MAX(sal)
+FROM emp
+GROUP BY deptno
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 모든 데이터를 입력할 경우
+INSERT INTO emp
+VALUES(8000, 'CHERRY', 'CLERK', 7902, TO_DATE('19/12/12'), 800, NULL, 20);
+
+-- CTAS(테이블 복제 [C]REATE [T]ABLE [A]S [S]ELECT)
+CREATE TABLE emp2
+AS 
+SELECT * FROM emp;
+
+-- 사원 번호가 7902번인 사원의 부서번호를 30으로 수정
+-- 부서번호 : deptno, 사원번호 : empno
+UPDATE emp
+SET deptno=30
+WHERE empno=7902;
+
+-- 부서번호가 20인 사원의 급여를 10% 올려주세요.
+-- 급여 : sal, 테이블 : emp2, 부서번호 : deptno
+UPDATE emp2
+SET sal=sal*1.1
+WHERE deptno=20;
+
+-- 모든 사원의 입사일을 오늘로 수정
+-- 입사일 : hiredate, 테이블 emp2
+UPDATE emp2
+SET hiredate=SYSDATE;
+
+-- 사원번호가 7902번인 사원의 데이터를 삭제
+DELETE FROM emp2
+WHERE empno=7902;
+
+-- 전체사원삭제
+DELETE FROM emp2;
+
+ROLLBACK;
+
+TRUNCATE TABLE emp2;
+
+INSERT INTO emp2
+SELECT * FROM emp2;
+
+SELECT * FROM emp2;
+
+-- SELECT ~ WHERE 
+-- WEHRE절에 많이 사용하는 연산자
+-- IN : list의 값 중 어느 하나와 일치하는 데이터 출력
+-- NOT IN : list의 값과 일치하지 않는 데이터 출력
+-- IS NULL : NULL값을 갖는 데이터만 출력
+-- IS NOT NULL : NULL값을 갖지 않는 데이터를 출력
+-- BETWEEN a AND b : a와 b사이의 데이터를 출력(a, b 포함)
+-- LIKE : 일치하는 데이터를 출력(검색)
+
+
+-- IN 연산자
+-- 사번이 7900, 7934번인 사원의 사번과 성명 출력
+SELECT empno, ename
+FROM emp2
+WHERE empno NOT IN(7900,7934);
+
+-- NOT IN 연산자
+-- 사번이 7900, 7934번이 아닌 사원의 사번과 성명 출력
+SELECT empno, ename
+FROM emp2
+WHERE empno NOT IN(7900,7934);
+
+-- BETWEEN 
+-- 급여가 3000에서 5000사이인 사원만 조회
+SELECT empno, ename
+FROM emp2
+WHERE sal >= 3000 AND sal <= 5000;
+
+SELECT empno, ename
+FROM emp2
+WHERE sal BETWEEN 3000 AND 5000;
+
+-- LIKE
+-- 검색 STRING 값에 대한 와일드 카드 검색을 위해서 사용
+-- % : 여러 문자를 뜻함
+-- _ : 1개의 문자를 사용
+SELECT empno, ename
+FROM emp2
+WHERE ename LIKE '%K%';
+
+-- ORDER BY (정렬)
+SELECT empno, ename
+FROM emp2
+WHERE deptno = 30
+ORDER BY sal ASC;
+
+SELECT * FROM tbl_study;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--2019/12/13------------------------------------------------------
+-- 기획사 테이블 생성
+DROP TABLE tbl_enter;
+CREATE TABLE tbl_enter(
+    ano VARCHAR2(20) PRIMARY KEY,   --소속 아티스트 번호
+    aname VARCHAR2(50) NOT NULL,    -- 아티스트 이름
+    major VARCHAR2(50) NOT NULL,    -- 분야(연기, 가수...)
+    groupyn VARCHAR2(5) NOT NULL,   -- 그룹 유무(y/n)
+    groupnm VARCHAR2(100),          -- 그룹명
+    sal NUMBER NOT NULL,            -- 연봉
+    regdate DATE DEFAULT SYSDATE
+);
+
+-- 시퀀스 (DDL / 자동으로 1씩 증가 / 에러가 떠도 값이 증가함)
+DROP SEQUENCE seq_enter;
+CREATE SEQUENCE seq_enter
+    START WITH 1        -- 시작값
+    INCREMENT BY 1      -- 증가값
+    NOCYCLE;            -- 순환x 계속 무한대로 증가
+    -- MAXVALUE 20;     -- 최대값
+    -- MINVALUE 1       -- 최소값
+    -- CYCLE/NOCYCLE    -- 반복여부 
+    
+
+DESC tbl_enter;
+SELECT * FROM tbl_enter;
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '미나', '가수', 'y', '트와이스', 7000);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '모모', '가수', 'y', '트와이스', 7800);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '다현', '가수', 'y', '트와이스', 7000);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '서현', '가수', 'y', '소녀시대', 9900);
+
+INSERT INTO tbl_enter(ano, aname, major, groupyn, groupnm, sal)
+VALUES(seq_enter.NEXTVAL, '수영', '가수', 'y', '소녀시대', 9900);
+
+COMMIT;
+
+SELECT * FROM tbl_enter;
+
+DESC tbl_enter;
+
+ROLLBACK;
+
+ALTER TABLE tbl_enter
+MODIFY (groupyn VARCHAR(10)); 
+
+
+
+
+
+
+
+--2019/12/16--------------------------------------------------------------
+-- 서점관리 테이블생성
+DROP TABLE tbl_book;
+CREATE TABLE tbl_book(
+    bno VARCHAR2(20) PRIMARY KEY,   -- 책번호
+    bname VARCHAR2(100) NOT NULL,   -- 책이름
+    price NUMBER NOT NULL,          -- 책가격
+    company VARCHAR2(100) NOT NULL, -- 출판사
+    writer VARCHAR2(100) NOT NULL,  -- 저자
+    regdate DATE DEFAULT SYSDATE    -- 출판일자
+);
+
+DROP SEQUENCE seq_book;
+CREATE SEQUENCE seq_book
+    START WITH 1
+    INCREMENT BY 1
+    NOCYCLE;
+
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.nextVAL, 'DO it 자바프로그래밍 입문', 25000, '이지스퍼빌리싱', '박은종');
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.nextVAL, '열혈 JAVA 프로그래밍', 30000, '오렌지미디어', '윤성우');
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.nextVAL, '예제로 익히는 제이쿼리 3', 33000, '에이콘', '아담 보두치');
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.nextVAL, '오라클과 SQL PL/SQL을 다루는 기술', 28000, '길벗', '홍형경');
+INSERT INTO tbl_book(bno, bname, price, company, writer)
+VALUES(seq_book.nextVAL, 'JAVA! 자바! 잡아?', 22000, '나자바바', '최초롱');
+
+COMMIT;
+    
+    
+SELECT * FROM tbl_book;
+    
+DELETE FROM tbl_book
+WHERE bno = 6;
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--2019/12/17--------------------------------------------------------------------------------------
+DROP TABLE tbl_board;
+
+CREATE TABLE tbl_board(
+    bno NUMBER PRIMARY KEY,
+    title VARCHAR2(200) NOT NULL,
+    content VARCHAR2(500) NOT NULL,
+    writer VARCHAR2(100) NOT NULL,
+    viewcnt NUMBER DEFAULT 0,
+    regdate DATE DEFAULT SYSDATE 
+);
+
+DROP SEQUENCE seq_board;
+
+CREATE SEQUENCE seq_board
+    START WITH 1
+    INCREMENT BY 1
+    NOCYCLE;
+
+DESC tbl_board;
+
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES (seq_board.nextVAL, '오늘', '오늘 날씨 비온다', '백진주');
+INSERT INTO tbl_board (bno, title, content, writer)
+VALUES(seq_board.nextVAL, '수업', '하기싫다', '진미경');
+INSERT INTO tbl_board (bno, title, content, writer)
+VALUES(seq_board.nextVAL, '시험', '시험 보기싫다', '백진주');
+INSERT INTO tbl_board(bno, title, content, writer)
+VALUES(seq_board.nextVAL, '왈왈', '왈왈왈왈왈왈왈', '뭉치');
+INSERT INTO tbl_board (bno, title, content, writer)
+VALUES(seq_board.nextVAL, '야옹', '냥냥냥냥냥냥냥냥냥', '모모');
+
+SELECT * FROM tbl_board
+;
+
+COMMIT;
+
+--2019/12/31------------------------------------------------------------------------------------------
+DROP TABLE tbl_bank;
+
+CREATE TABLE tbl_bank(
+    bno NUMBER PRIMARY KEY, -- 계좌번호
+    bname VARCHAR2(50) NOT NULL, -- 예금주
+    pw VARCHAR2(50) NOT NULL, -- 계좌 비밀번호
+    money NUMBER DEFAULT 0, -- 계좌 금액
+    regdate DATE DEFAULT SYSDATE -- 계좌개설일
+);
+
+DESC tbl_bank;
+
+DROP SEQUENCE seq_bank;
+
+CREATE SEQUENCE seq_bank
+    START WITH 101
+    INCREMENT BY 1
+    NOCYCLE;
+    
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.nextVAL, '백진주', '0926');
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.nextVAL, '진미경', '1234');
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.nextVAL, '백의성', '1234');
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.nextVAL, '모모', '1234');
+INSERT INTO tbl_bank(bno, bname, pw)
+VALUES(seq_bank.nextVAL, '찡아', '1234');
+
+COMMIT;
+
+SELECT * FROM tbl_bank
+ORDER BY bno ASC;
+
+ROLLBACK;
+
+SELECT COUNT(*) FROM tbl_bank
+WHERE bno=101 AND pw=0926;
+
+
+
+--2020/01/02----------------------------------------------------------------------------------
+DROP TABLE tbl_member;
+
+CREATE TABLE tbl_member(
+    id VARCHAR2(50) PRIMARY KEY,
+    pw VARCHAR2(30) NOT NULL,
+    name VARCHAR2(100) NOT NULL,
+    phone VARCHAR2(100) NOT NULL,
+    regdate DATE DEFAULT SYSDATE
+    );
+
+INSERT INTO tbl_member(id, pw, name, PHONE)
+VALUES('pjj', '0926', '백진주', '01066250647');
+INSERT INTO tbl_member(id, pw, name, PHONE)
+VALUES('pes', '0417', '백의성', '01048452578');
+INSERT INTO tbl_member(id, pw, name, PHONE)
+VALUES('ljh', '1120', '이지향', '01023370274');
+INSERT INTO tbl_member(id, pw, name, PHONE)
+VALUES('jwh', '0713', '조원혜', '01099619707');
+INSERT INTO tbl_member(id, pw, name, PHONE)
+VALUES('lsy', '0602', '이수연', '01025752570');
+
+COMMIT;
+
+SELECT * FROM tbl_member;
+
+--편의점 테이블
+DROP TABLE tbl_product;
+CREATE TABLE tbl_product(
+    pno NUMBER PRIMARY KEY,
+    pname VARCHAR(100) NOT NULL UNIQUE,
+    company VARCHAR(100) NOT NULL,
+    price NUMBER NOT NULL,
+    cnt NUMBER DEFAULT 0,
+    regdate DATE DEFAULT SYSDATE
+);
+
+DROP SEQUENCE seq_product;
+
+CREATE SEQUENCE seq_product 
+    START WITH 1001
+    INCREMENT BY 1
+    NOCYCLE;
+    
+INSERT INTO tbl_product(pno, pname, company, price, cnt)
+VALUES(seq_product.NEXTVAL, '코카콜라', '코카콜라', 900, 5);
+INSERT INTO tbl_product(pno, pname, company, price, cnt)
+VALUES(seq_product.NEXTVAL, '스프라이트', '코카콜라', 800, 10);
+
+COMMIT;
+SELECT * FROM tbl_product;
+
+--등록 또는 추가할 제품이름을 입력하세요.
+--'코카콜라' => DB
+
+SELECT COUNT(*) FROM tbl_product
+WHERE pname = '코카콜라';
+
+--  결과 > 1 => 기존에 등록된 제품 => 추가기능 작동
+--  결과 == 0 => 처음 입고된 제품 => 등록기능 작동
+  
+UPDATE tbl_product
+SET cnt = cnt + 10
+WHERE pname = '코카콜라';
+
+-- 2020-01-06----------------------------------------------------------------
+DROP TABLE tbl_sale;
+CREATE TABLE tbl_sale(
+    sno NUMBER PRIMARY KEY,
+    sname VARCHAR(100) NOT NULL UNIQUE,
+    cnt NUMBER DEFAULT 0,
+    tprice NUMBER NOT NULL,
+    regdate DATE DEFAULT SYSDATE
+);
+
+DROP SEQUENCE seq_sale;
+CREATE SEQUENCE seq_sale 
+    START WITH 1
+    INCREMENT BY 1
+    NOCYCLE;
+
+INSERT INTO tbl_sale(sno, sname, cnt, tprice)
+VALUES(seq_sale.NEXTVAL, '코카콜라', 1, 800);
+INSERT INTO tbl_sale(sno, sname, cnt, tprice)
+VALUES(seq_sale.NEXTVAL, '스프라이트', 5, 4000);
+INSERT INTO tbl_sale(sno, sname, cnt, tprice)
+VALUES(seq_sale.NEXTVAL, '코카콜라', 3, 2000);
+INSERT INTO tbl_sale(sno, sname, cnt, tprice)
+VALUES(seq_sale.NEXTVAL, '스프라이트', 6, 1500);
+INSERT INTO tbl_sale(sno, sname, cnt, tprice)
+VALUES(seq_sale.NEXTVAL, '코카콜라', 3, 4000);
+INSERT INTO tbl_sale(sno, sname, cnt, tprice)
+VALUES(seq_sale.NEXTVAL, '코카콜라', 2, 1700);
+INSERT INTO tbl_sale(sno, sname, cnt, tprice)
+VALUES(seq_sale.NEXTVAL, '스프라이트', 5, 2300);
+
+
+
+
+
+COMMIT;
+SELECT * FROM tbl_sale;
+--전체 총판매액
+SELECT SUM(tprice) FROM tbl_sale;
+
+-- 제품별 총 판매액
+SELECT sname , SUM(tprice) --sum 그룹별로 총 판매액
+FROM tbl_sale 
+GROUP BY sname; --같은이름끼리 그룹으로 만들어준다.
+
+--오늘 판매한 제품의 총판매액
+SELECT SUM(tprice) FROM tbl_sale
+WHERE TO_CHAR(regdate, 'YYYYMMDD') = TO_CHAR(SYSDATE,'YYYYMMDD'); -- sysdate(현재시간) 20200101=/20200106
+
+--오늘 판매한 상품의 수량과 총금액
+SELECT sname, SUM(cnt) as cnt , SUM(tprice) as tprice
+FROM tbl_sale
+WHERE TO_CHAR(regdate, 'YYYYMMDD') = TO_CHAR(SYSDATE,'YYYYMMDD');
+GROUP BY sname;
