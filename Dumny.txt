@@ -158,3 +158,466 @@ VALUES(seq_product.NEXTVAL, '스프라이트', '코카콜라', 800, 10);
 COMMIT;
 SELECT * FROM tbl_product;
 
+
+===========================================================================================
+DROP TABLE EMP;
+DROP TABLE DEPT;
+DROP TABLE BONUS;
+DROP TABLE SALGRADE;
+DROP TABLE DUMMY;
+ 
+CREATE TABLE EMP
+       (EMPNO NUMBER(4) PRIMARY KEY,
+        ENAME VARCHAR2(10),
+        JOB VARCHAR2(9),
+        MGR NUMBER(4),
+        HIREDATE DATE,
+        SAL NUMBER(7, 2),
+        COMM NUMBER(7, 2),
+        DEPTNO NUMBER(2));
+ 
+INSERT INTO EMP VALUES
+        (7369, 'SMITH',  'CLERK',     7902,
+        sysdate,  800, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7499, 'ALLEN',  'SALESMAN',  7698,
+        sysdate, 1600,  300, 30);
+         
+INSERT INTO EMP VALUES
+        (7521, 'WARD',   'SALESMAN',  7698,
+        sysdate, 1250,  500, 30);
+         
+INSERT INTO EMP VALUES
+        (7566, 'JONES',  'MANAGER',   7839,
+        sysdate,  2975, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7654, 'MARTIN', 'SALESMAN',  7698,
+        sysdate, 1250, 1400, 30);
+         
+INSERT INTO EMP VALUES
+        (7698, 'BLAKE',  'MANAGER',   7839,
+        sysdate,  2850, NULL, 30);
+         
+INSERT INTO EMP VALUES
+        (7782, 'CLARK',  'MANAGER',   7839,
+        sysdate,  2450, NULL, 10);
+INSERT INTO EMP VALUES
+        (7788, 'SCOTT',  'ANALYST',   7566,
+        sysdate, 3000, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7839, 'KING',   'PRESIDENT', NULL,
+        sysdate, 5000, NULL, 10);
+         
+INSERT INTO EMP VALUES
+        (7844, 'TURNER', 'SALESMAN',  7698,
+        sysdate,  1500,    0, 30);
+         
+INSERT INTO EMP VALUES
+        (7876, 'ADAMS',  'CLERK',     7788,
+        sysdate, 1100, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7900, 'JAMES',  'CLERK',     7698,
+        sysdate,   950, NULL, 30);
+         
+INSERT INTO EMP VALUES
+        (7902, 'FORD',   'ANALYST',   7566,
+        sysdate,  3000, NULL, 20);
+         
+INSERT INTO EMP VALUES
+        (7934, 'MILLER', 'CLERK',     7782,
+        sysdate, 1300, NULL, 10);
+ 
+CREATE TABLE DEPT
+       (DEPTNO NUMBER(2) PRIMARY KEY,
+        DNAME VARCHAR2(14),
+        LOC VARCHAR2(13) );
+ 
+INSERT INTO DEPT VALUES (10, 'ACCOUNTING', 'NEW YORK');
+INSERT INTO DEPT VALUES (20, 'RESEARCH',   'DALLAS');
+INSERT INTO DEPT VALUES (30, 'SALES',      'CHICAGO');
+INSERT INTO DEPT VALUES (40, 'OPERATIONS', 'BOSTON');
+ 
+CREATE TABLE BONUS
+        (ENAME VARCHAR2(10),
+         JOB   VARCHAR2(9),
+         SAL   NUMBER,
+         COMM  NUMBER);
+ 
+CREATE TABLE SALGRADE
+        (GRADE NUMBER,
+         LOSAL NUMBER,
+         HISAL NUMBER);
+ 
+INSERT INTO SALGRADE VALUES (1,  700, 1200);
+INSERT INTO SALGRADE VALUES (2, 1201, 1400);
+INSERT INTO SALGRADE VALUES (3, 1401, 2000);
+INSERT INTO SALGRADE VALUES (4, 2001, 3000);
+INSERT INTO SALGRADE VALUES (5, 3001, 9999);
+ 
+CREATE TABLE DUMMY
+        (DUMMY NUMBER);
+ 
+INSERT INTO DUMMY VALUES (0);
+ 
+COMMIT;
+
+SELECT * FROM emp;
+
+-------------2020-01-06---------------------------------------------------------
+
+-- JOIN
+-- 1. 둘 이상의 테이블을 연결하여 하나의 가상테이블을 만드는 것 
+-- 2. 보통 둘 이상의 행들의 공통된 값 PK(주식별자) 및 FK값을 사용하여 조인한다
+-- 3. 두 개의 테이블을 SELECT 문장 안에서 조인하려면 적어도 하나의 
+--   컬럼이 그 두 테이블 사이에서 공유되어야 한다. 
+
+SELECT * FROM emp;  -- depton : FK키
+SELECT * FROM dept; -- depton : PK키
+
+-- 신입사원 반드시 하나 이상의 부서에 소속되어야한다. 
+
+-- JOIN 종류
+-- 1. Equi Join(동등조인)
+-- ex) dept 테이블과 emp테이블을 조인
+-- as 컬럼에 쓰이는거 table
+SELECT e.empno, e.ename as 사원이름, dept.dname
+FROM dept d, emp e
+WHERE d.deptno = e.deptno; -- WHERE dept.deptno = emp.deptno
+
+-- 2. Inner Join == Equi Join
+-- ex) dept테이블과 emp테이블을 Inner 조인
+-- , 대신에 INNER JOIN을 사용(INNER 생략가능)
+-- WHERE절이 ON절 => JOIN의 조건
+SELECT e.empno, e.ename, d.danme
+FROM dept d
+INNER JOIN emp e
+ON d.deptno = e.deptno;
+
+-- 3. Natural join == Equi join
+-- ex) dept테이블과 emp테이블을 Natural 조인
+-- 동일한 컬럼을 내부적으로 모두 조인, ON절(동등조건)이 생략 가능
+-- Natural Join에서 USING절을 사용하고싶으면 Inner Join으로 변경하시고 사용해야함
+-- Natural과 USING은 같이 사용이 불가능합니다. 
+-- => Natural Join
+SELECT e.empno, e.ename, d.dname
+FROM dept d
+NATURAL JOIN emp 
+USING(deptno);
+-- USING(deptno); -- 동일한 이름을 가지는 컬럼은 모두 조인됨으로
+                  -- USING을 사용하면 컬럼을 선택해서 조인 가능
+
+-- 4. Non-Equi Join
+-- 테이블의 어떤 컬럼도 Join할 테이블의 컬럼과 일치하지 않을 때 사용
+-- 조인조건은 동등(=) 이외의 연산자를 사용합니다. 
+-- BETWEEN AND, IS NULL, IS NOT NULL, IN, NOT IN 
+-- 거의 사용하지 않는다. 
+SELECT * FROM salgrade; -- 등급별 연봉최저액 ~ 최고액
+-- ex) emp테이블과 salgrade테이블의 Non_Equi Join
+SELECT e.ename, e.sal, s.grade
+FROM emp e, salgrade s
+WHERE e.sal
+BETWEEN s.losal
+AND s.hisal;
+
+-- 5. Self Join
+-- Equi Join과 같으나 하나의 테이블에서 조인이 일어난다는 것이 다르다.
+-- 같은 테이블에 대해 두개의 alias를 사용하여 FROM절에 두개의 테이블 사용하는 것 처럼 조인한다. 
+-- ex) 사원의 매니저이름을 조회하는 Self Join
+SELECT e.ename, e.ename as Manager
+FROM emp e, emp a
+WHERE e.empno = a.mgr;
+
+-- 6. Cross Join = Cartesian Product
+-- 검색하고자 했던 데이터뿐 아니라 조인에 사용된 테이블들의 모든 데이터가 반환 되는 현상
+-- Cartesian Product는 조인 조건을 정의하지 않은 경우 발생한다. 
+-- CROSS JOIN를 사용하면 Cartesian Product 값을 얻을 수 있음
+-- ex) CROSS JOIN절을 이용하여 Cartesian Product 값을 얻는 예제
+SELECT e.empno, e.ename, d.dname
+FROM dept d CROSS JOIN emp e;
+-- emp:14개, dept:4개 => 14x4 = 56건 출력
+
+-- 7. Outer Join
+-- Equi Join은 조인을 생성하려는 두 개의 테이블의 한쪽 컬럼에서 값이 없다면 데이터를 반환하지 못함.
+-- 동일 조건에서 조인 조건을 만족하는 값이 없는 행들을 조화하기 위해 Outer Join 을 사용
+-- Outer Join  연산자는 (+)이다. 
+-- 조인시 값이 없는 조인측에 (+)를 위치 시킨다. 
+-- Outer Join 연산자는 표현식의 한 편에만 올 수 있다. 
+-- ex) Equi Join과 Outer Join의 비교
+--    ex1) Equi Join으로 부서번호를 조회
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM emp e, dept d
+WHERE e.deptno = d.deptno;
+
+--    ex2) Outer Join으로 부서번호 조회
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM emp e, dept d
+WHERE e.deptno(+) = d.deptno; 
+
+--    ex3) LEFT OUTER JOIN
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM dept d
+LEFT OUTER JOIN emp e
+ON e.deptno = d.deptno;
+
+--    ex4) RIGHT OUTER JOIN
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM emp e
+RIGHT OUTER JOIN dept d
+ON e.deptno = d.deptno;
+
+--    ex5) FULL OUTER JOIN
+SELECT DISTINCT(e.deptno), d.deptno, d.dname
+FROM emp e
+FULL OUTER JOIN dept d
+ON e.deptno = d.deptno;
+
+-- Commit과 Rollback
+-- DCL(TCL) : 트랜잭션
+-- SAVEPOINT a
+-- ROLLBACK TO a;
+
+-------------2020-01-07---------------------------------------------------------
+-- Oracle 내장함수
+-- : DUAL 테이블  
+--  1. Oracle에서 자체적으로 제공하는 테이블
+--  2. 간단하게 함수를 이용해서 계산 결과값을 확인할 때 사용
+--  3. SYS사용자(신급권한)가 소유하는 Oracle의 표준 테이블
+--  4. SYS사용자가 소유하지만 어느 사용자든 접근 가능
+--  5. 오직 한행, 한컬럼만 담고 있는 dummy 테이블
+-- : Dual 테이블 사용용도
+--  1. 사용자가 함수(계산)를 실행할 때 임시로 사용하는데 적합
+--  2. 함수에 대한 쓰임을 알고 싶을 때 특정 테이블 생성없이 dual을 사용하면 return받을 수 있음
+
+-- ex) 현재시간 출력
+SELECT SYSDATE FROM DUAL;
+
+-- ex) 시퀀스 현재번호 출력
+SELECT seq_sale.CURRVAL FROM DUAL;
+
+-- ex) 시퀸스 다음번호 출력
+SELECT seq_sale.NEXTVAL FROM DUAL;
+
+--  ** 숫자형 함수
+-- 1. ABS 절대값을 반환하는 함수
+SELECT ABS(-1.234) absolute FROM DUAL;
+
+-- 2. CEIL 올림값을 반환하는 함수
+SELECT CEIL(10.1234) FROM DUAL;
+
+-- 3. FLOOR  버림값을 반환하는 함수
+SELECT FLOOR(10.1234) FROM DUAL;
+
+-- 4. MOD 함수를 m을 n으로 나눈 나머지 반환, n이 0일 경우 m을 반환
+SELECT MOD(9,4) FROM DUAL;
+
+-- 5. ROUND n값의 반올림을 하는 함수로 m은 소숫점 아래 자릿수를 나타냄
+SELECT ROUND(192.153, 1) FROM DUAL;
+SELECT ROUND(192.153, -1) FROM DUAL;
+ 
+-- 6. TRUNC n값을 절삭하는 함수는 m은 소숫점 아래 자릿수를 나타냄
+SELECT TRUNC(7.5997, 2) FROM DUAL;
+SELECT TRUNC(789.5597, -2) FROM DUAL;
+
+-- ** 문자열함수
+-- 1. CONCAT 두 문자를 결합, '||' <= LIKE절
+-- ex) '%' || keyword || '%' => '%keyword%'
+SELECT CONCAT('www.', 'oracle.') || 'com' FROM DUAL;
+
+-- 2. INITCAP(char), LOWER(char), UPPER(char)
+-- INITCAP : 주어진 문자열의 첫 번째 문자를 대문자로 변환
+-- LOWER : 주어진 문자열을 소문자로 변환
+-- UPPER : 주어진 문자열을 대문자로 변환
+SELECT INITCAP('oracle') name FROM DUAL;
+SELECT LOWER('oracle') name FROM DUAL;
+SELECT UPPER('oracle') name FROM DUAL;
+
+-- 3. LENGTH(char), LENGTHB(char)
+-- 문자열의 길이를 반환
+SELECT LENGTH('오라클자바') len FROM DUAL; -- 결과: 5(순수 글자수)
+SELECT LENGTHB('오라클자바') len FROM DUAL; -- --결과 : 15(글자 바이트수, 한글 1글자당 3byte)
+
+-- 4. REPLACE(char1, str1, str2)
+-- 문자열의 특정 문자를 다른 문자로 변환
+SELECT REPLACE('오라클자바', '오라클', '파이썬') FROM DUAL;
+
+-- 5. INSTR(char1, str1, m, n)
+-- 문자열이 포함되어 있는지 조사하여 문자열의 위치를 반환, 문자열이 발견되지 않으면 0이 반환
+-- char1:지정문자, str1:검색문자, m: 시작위치, n:검색순위
+SELECT INSTR('CORPORATE FLOOR', 'OK') FROM DUAL;
+SELECT INSTR('CORPORATE FLOOR', 'OR') FROM DUAL;
+SELECT INSTR('CORPORATE FLOOR', 'OR', 3, 2)idx FROM DUAL;
+
+-- 6. TRIM
+-- 특정한 문자를 제거, 제거할 문자를 입력하지 않으면 기본적으로 공백이 제거
+SELECT TRIM('     오라클자바') FROM DUAL;
+
+
+-- 집계함수
+--  1. GROUP BY절을 이용하여 그룹 당 하나의 결과로 그룹화 할 수 있다. 
+--  2. HAVING절을 사용하여 집계함수를 이용한 조건 비교를 할 수 있다. 
+--  3. MIN, MAX 함수는 모든 자료형에 사용할 수 있다. 
+
+-- 1. COUNT
+-- 검색된 행의 수를 반환
+SELECT COUNT(deptno) FROM dept;
+
+-- 2. MAX: 최대값 반환
+SELECT MAX(sal) salary FROM emp;
+
+-- 3. MIN: 최소값 반환
+SELECT MIN(sal) salary FROM emp;
+
+-- 4. SUM: 합을 반환
+SELECT SUM(SAL) salary
+FROM emp
+WHERE deptno = 30;
+
+-- 5.STDDEV : 표준편차
+SELECT ROUND(STDDEV(sal), 3) salary
+FROM emp
+WHERE deptno = 30;
+
+-- 집계함수 예
+SELECT deptno 부서번호, COUNT(*) 사원수,
+       MAX(sal) 최대급여, MIN(sal) 최소급여,
+       SUM(sal) 급여합계, ROUND(AVG(sal)) 평균급여
+ FROM emp
+GROUP BY deptno
+ORDER BY SUM(sal) DESC;
+
+-- SELECT의 GROUP BY절
+--  1. 데이터를 원하는 그룹으로 나눌 수 있음
+--  2. 나누고자 하는 그룹의 컬럼명을 SELECT절과 GROUP BY절 뒤에 추가하면 됨
+--  3. 집계함수와 함께 사용되는 상수는 GROUP BY절에 추가하지 않아도 된다. 
+-- ※ 집계함수는 
+
+-- ex) 부서별 사원수 조회
+SELECT '2020년' year, deptno 부서번호, COUNT(*) 사원수
+FROM emp 
+GROUP BY deptno
+ORDER BY COUNT(*) DESC;
+
+-- ex) 부서별로 그룹하여 부서번호, 인원수, 급여의 평균, 급여의 합을 조회
+SELECT deptno 부서번호, COUNT(*) 인원수, ROUND(AVG(sal)) 급여평균, SUM(sal) 급여합계
+FROM emp
+GROUP BY deptno
+
+-- SELECT에 HAVING절
+--  1. WHERE절에는 집계함수를 사용할수 없음
+--  2. HAVING절은 집계함수를 가지고 조건비교를 할 때 사용
+--  3. HAVING절은 GROUP BY절과 함께 사용
+
+-- ex) 사원수가 다섯 명이 넘는 부서와 사원수를 조회
+SELECT d.dname, COUNT(e.empno) 사원수
+FROM emp e, dept d
+WHERE e.deptno = d.deptno
+GROUP BY dname
+HAVING COUNT(e.empno) >= 5
+ORDER BY dname;
+
+-- 1. FROM : emp 전체, dept 전체
+-- 2. WHERE: emp테이블의 dept테이블의 deptno에 값이 같으면 JOIN(JOIN된 14건)
+-- 3. GROUP BY : JOIN된 14건의 결과에서 dname 컬럼의 값으로 그룹핑(3종류:ACCOUNTING, RESEARCH, SALES)
+-- 4. HAVING: 그루핑 된 3건의 결과 중 사원수가 5보다 크거나 같은 2그룹(RESEARCH, SALES)
+-- 5. SELECT: 출력하고 싶은 컬럼 지정(사원이름, 사원수)
+-- 6. ORDER BY: 정렬(danme을 오름차순 정렬: 알파벳 a, b, c .... 순)
+
+
+-- VIEW 테이블 
+--  1. 하나의 가상 테이블
+--  2. 실제 데이터가 저장되는 것은 아니지만 뷰를 통해 데이터를 관리할 수 있음
+--  3. 복잡한 Query를 통해 얻을 수 있는 결과를 간단한 Query로 얻을 수 있음
+--  4. 한 개의 뷰로 여러 테이블에 대한 데이터를 검색 할 수 있음
+-- View 설정값
+-- FORCE : 기본 테이블 유무에 관계없이 VIEW를 생성
+-- WITH CHECK OPTION : VIEW에 의해 엑세스될 수 있는 행만이 입력되거나 변경될 수 있음
+-- WITH READ ONLY: SELECT만 가능한 VIEW 생성
+
+-- View 테이블 구조
+-- CREATE [OR REPLACE] [FORCE|NOFORCE] VIEW view_name
+-- AS subquery
+-- [WITH CHECK OPTION] [CONSTRAINT 제약조건]
+-- [WITH READ ONLY]
+
+-- ex) View 생성
+CREATE OR REPLACE VIEW view_query
+AS 
+    SELECT e.empno, e.ename, d.loc
+    FROM emp e, dept d
+    WHERE e.deptno = d.deptno;
+    
+SELECT * FROM view_query;
+
+-- 인덱스
+--  : 테이블내에 원하는 레코드를 빠르게 찾아갈 수 있도록 만들어진 데이터 구조
+--  : 오라클에서는 B-tree를 기반으로 인덱스를 생성함
+
+-- 자동인덱스 : PK, Unique 속성을 사용할 때 자동으로 생성되는 인덱스
+-- 수동인덱스 : CREATE INDEX명으로 직접 만든 인덱스
+
+
+-- ※ 인덱스를 건다고 해서 무조건 성능이 좋아지는건 아님, 역으로 나빠질수도 있음
+
+-- 인덱스를 사용하면 좋은 경우
+--  1. WHERE절이나 JOIN조건 안에서 자주 사용되는 컬럼
+--  2. Null값이 많이 포함되어 있는 컬럼
+--  3. WHERE절이나 JOIN조건에서 자주 사용되는 두 개이상의 컬럼들 
+
+-- 인덱스를 사용하면 안좋은 경우
+--  1. 테이블이 작은경우(데이터가 작은 경우)
+--  2. 테이블이 자주 갱신되는 경우(값이 INSERT, UPDATE, DELETE 되는 경우)
+
+
+-- ex) UNIQUE 인덱스 생성
+CREATE UNIQUE INDEX emp_ename_indx
+ON emp(ename);
+
+-- ex) 인덱스 삭제
+DROP INDEX emp_ename_indx;
+
+
+-- Subquery (서브 쿼리)
+--  1. Subquery는 다른 하나의 SQL문장의 절에 NEXTEDED된 SELECT 문장
+--  2. SELECT, UPDATE, DELETE, INSERT와 같은 DML문과 DREATE 또는 VIEW외 WHERE절이나 HAVING절에 사용
+--  3. 보통 Subquery는 Main Query 이전에 한번 실행된다.
+--  4. Subquery는 괄호로 묶어야 함 
+--  5. 단일행 연산자(=, <, >, <=, >=, <>, !=)와
+--     다중행 연산자(IN, NOT IN, ANY, ALL, EXISTS)들이 서브쿼리에서 사용
+--  6. Subquery는 연산자의 오른쪽에 위치해야 한다.
+
+-- ex) JOB이 'CLERK'인 사원의 이름과 직업을 조회
+SELECT ename, job
+FROM emp
+WHERE job = 'CLERK';
+
+
+-- 동선씨 직업 몰라!
+-- 동선씨 직업을 갖는 사람들을 조회 : Main Query
+--   ㄴ 동선씨 직업 조회 : Sub Query
+
+SELECT ename, job, sal
+FROM emp
+WHERE job = (SELECT job 
+             FROM emp
+             WHERE ename = '동선')
+
+-- ex) 부서별로 가장 급여를 많이 받는 사원의 정보를 출력
+
+SELECT empno, ename, sal, deptno
+FROM emp
+WHERE sal IN (SELECT MAX(sal)
+             FROM emp
+             GROUP BY deptno);
+-- =============> Subquery 실행 후
+SELECT empno, ename, sal, deptno
+FROM emp
+WHERE sal IN (2850, 3000, 5000);
+
+부서별로 가장 급여를 많이받는 사람의 연봉
+SELECT MAX(sal)
+FROM emp
+GROUP BY deptno
